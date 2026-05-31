@@ -12,7 +12,15 @@ const scoreRouter = require('./routes/score');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.CLIENT_URL,
+].filter(Boolean);
+
+app.use(cors({
+  origin: allowedOrigins.length ? allowedOrigins : true,
+  credentials: true,
+}));
 app.use(express.json());
 
 app.get('/api/health', (_req, res) => {
@@ -22,6 +30,15 @@ app.get('/api/health', (_req, res) => {
 app.use('/api/zones', zonesRouter);
 app.use('/api/reports', reportsRouter);
 app.use('/api/score', scoreRouter);
+
+const clientDist = path.join(__dirname, '../client/dist');
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(clientDist));
+  app.get(/^(?!\/api).*/, (_req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'));
+  });
+}
 
 app.listen(PORT, () => {
   console.log(`CivicLens API running on http://localhost:${PORT}`);

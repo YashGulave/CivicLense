@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: civiclens
+    runtime: node
+    plan: free
+    buildCommand: NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client && npm install --prefix server
+    startCommand: NODE_ENV=production npm start --prefix server
+    envVars:
+      - key: CLIENT_URL
+        sync: false

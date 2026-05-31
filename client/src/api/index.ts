@@ -1,7 +1,9 @@
 import axios from 'axios';
 import type { ZonesResponse, Report, ScoreResult } from '../types';
 
-const api = axios.create({ baseURL: '/api' });
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || '/api',
+});
 
 export async function fetchZones(): Promise<ZonesResponse> {
   const { data } = await api.get<ZonesResponse>('/zones');
